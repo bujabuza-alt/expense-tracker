@@ -217,8 +217,8 @@ export default function App() {
   // ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <div className="max-w-md mx-auto px-4 py-6 pb-28 space-y-4">
+    <div className="min-h-screen bg-gray-950 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="max-w-md mx-auto px-4 py-6 pb-28 space-y-4" style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}>
 
         {/* ── 헤더 ── */}
         <header className="flex items-center justify-between">
@@ -476,8 +476,8 @@ export default function App() {
         )}
       </div>
 
-      {/* ── FAB: 지출 추가 플로팅 버튼 ── */}
-      <div className="fixed bottom-6 right-4 z-40">
+      {/* ── FAB: 지출 추가 플로팅 버튼 (safe area 대응) ── */}
+      <div className="fixed right-4 z-40" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
         <button
           onClick={() => openModal(selDate || TODAY)}
           className="w-14 h-14 bg-violet-600 hover:bg-violet-500 active:scale-90 rounded-2xl flex items-center justify-center shadow-2xl shadow-violet-950/60 transition-all"
