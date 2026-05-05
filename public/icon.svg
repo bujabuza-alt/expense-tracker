@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 보라색 배경 (둥근 모서리) -->
+  <rect width="512" height="512" rx="112" fill="#7c3aed"/>
+  <!-- 지갑 윗면 -->
+  <rect x="80" y="152" width="352" height="52" rx="16" fill="rgba(255,255,255,0.75)"/>
+  <!-- 지갑 본체 -->
+  <rect x="80" y="168" width="352" height="212" rx="24" fill="white" opacity="0.96"/>
+  <!-- 카드 슬롯 영역 -->
+  <rect x="296" y="234" width="106" height="64" rx="32" fill="#6d28d9" opacity="0.3"/>
+  <!-- 코인 원형 -->
+  <circle cx="349" cy="266" r="22" fill="white"/>
+</svg>
