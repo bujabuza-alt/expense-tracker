@@ -2,12 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// GitHub Actions 환경에서는 /expense-tracker/ 경로로 배포
+const base = process.env.GITHUB_ACTIONS ? '/expense-tracker/' : '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      // 빌드 시 서비스 워커 자동 생성
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
@@ -18,28 +21,15 @@ export default defineConfig({
         description: '미니멀 개인 지출 관리 앱',
         theme_color: '#7c3aed',
         background_color: '#030712',
-        display: 'standalone',         // 브라우저 주소창 없이 앱처럼 실행
+        display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         lang: 'ko',
         icons: [
-          {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
+          { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
     }),
