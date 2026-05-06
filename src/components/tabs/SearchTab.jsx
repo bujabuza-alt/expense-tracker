@@ -1,12 +1,59 @@
 import { useState, useMemo } from 'react';
-import { Search, X, Trash2 } from 'lucide-react';
+import { Search, X, Trash2, Pencil } from 'lucide-react';
 import { fmt } from '../../utils';
 
-export default function SearchTab({ expenses, paymentMethods, onDeleteExpense }) {
+// 업데이트 이력:
+// - 기간 필터에 월별 프리셋 버튼 추가 (이번 달, 지난 달, 2달 전, 3달 전)
+// - 검색 결과 항목에 편집(연필) 버튼 추가
+// - onEditExpense 프롭 추가
+
+// YYYY-MM-DD 문자열 반환 헬퍼
+const toIso = (date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+// monthsAgo 개월 전의 첫날/마지막날 범위를 반환
+const monthRange = (monthsAgo) => {
+  const now   = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth() - monthsAgo, 1);
+  const end   = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+  return { from: toIso(start), to: toIso(end) };
+};
+
+const MONTH_PRESETS = [
+  { label: '이번 달', ago: 0 },
+  { label: '지난 달', ago: 1 },
+  { label: '2달 전',  ago: 2 },
+  { label: '3달 전',  ago: 3 },
+];
+
+export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, onEditExpense }) {
   const [query,    setQuery]    = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo,   setDateTo]   = useState('');
   const [filterPM, setFilterPM] = useState('전체');
+  const [activePreset, setActivePreset] = useState(null);
+
+  // 월별 프리셋 적용
+  const applyMonthPreset = (ago) => {
+    const { from, to } = monthRange(ago);
+    setDateFrom(from);
+    setDateTo(to);
+    setActivePreset(ago);
+  };
+
+  // 수동 날짜 변경 시 프리셋 선택 해제
+  const handleDateFromChange = (val) => {
+    setDateFrom(val);
+    setActivePreset(null);
+  };
+  const handleDateToChange = (val) => {
+    setDateTo(val);
+    setActivePreset(null);
+  };
 
   // 필터 조건에 맞는 지출 목록 (날짜 역순)
   const results = useMemo(() => {
@@ -32,6 +79,7 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense })
     setDateFrom('');
     setDateTo('');
     setFilterPM('전체');
+    setActivePreset(null);
   };
 
   return (
@@ -60,21 +108,40 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense })
 
         {/* 기간(날짜 범위) 선택 */}
         <div>
-          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
             기간
           </label>
+
+          {/* 월별 프리셋 버튼 */}
+          <div className="flex gap-1.5 flex-wrap mb-2">
+            {MONTH_PRESETS.map(({ label, ago }) => (
+              <button
+                key={ago}
+                onClick={() => applyMonthPreset(ago)}
+                className={`
+                  text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all
+                  ${activePreset === ago
+                    ? 'bg-violet-600 border-violet-500 text-white'
+                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-violet-600 hover:text-violet-300'}
+                `}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-2 gap-2">
             <input
               type="date"
               value={dateFrom}
-              onChange={e => setDateFrom(e.target.value)}
+              onChange={e => handleDateFromChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
               className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-xs text-white outline-none transition-colors"
             />
             <input
               type="date"
               value={dateTo}
-              onChange={e => setDateTo(e.target.value)}
+              onChange={e => handleDateToChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
               className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-xs text-white outline-none transition-colors"
             />
@@ -151,6 +218,15 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense })
                 </div>
                 <div className="flex items-center gap-2 ml-3 shrink-0">
                   <span className="text-sm font-bold text-rose-400">₩{fmt(e.amount)}</span>
+                  {onEditExpense && (
+                    <button
+                      onClick={() => onEditExpense(e)}
+                      className="text-gray-600 hover:text-violet-400 transition-colors"
+                      aria-label="편집"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     onClick={() => onDeleteExpense(e.id)}
                     className="text-gray-700 hover:text-red-400 transition-colors"

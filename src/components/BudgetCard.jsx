@@ -1,6 +1,8 @@
 import { Check, X } from 'lucide-react';
 import { fmt } from '../utils';
 
+// 업데이트 이력:
+// - 예산 입력 필드 고정 픽셀(w-28) → flex-grow 기반 비율 단위로 변경하여 반응형 레이아웃 개선
 export default function BudgetCard({
   budget, monthTotal,
   editingBudget, budgetDraft,
@@ -14,7 +16,7 @@ export default function BudgetCard({
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-gray-400">월 예산</span>
         {editingBudget ? (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-1 justify-end ml-4">
             <input
               autoFocus
               type="text"
@@ -25,12 +27,13 @@ export default function BudgetCard({
                 if (e.key === 'Enter')  onSave();
                 if (e.key === 'Escape') onCancel();
               }}
-              className="w-28 bg-gray-800 text-right text-sm px-2 py-1 rounded-lg border border-gray-700 focus:border-violet-500 outline-none text-white"
+              style={{ boxSizing: 'border-box' }}
+              className="flex-1 max-w-[50%] bg-gray-800 text-right text-sm px-2 py-1 rounded-lg border border-gray-700 focus:border-violet-500 outline-none text-white"
             />
-            <button onClick={onSave}   className="text-violet-400 hover:text-violet-300 transition-colors">
+            <button onClick={onSave}   className="text-violet-400 hover:text-violet-300 transition-colors shrink-0">
               <Check className="w-4 h-4" />
             </button>
-            <button onClick={onCancel} className="text-gray-600 hover:text-gray-400 transition-colors">
+            <button onClick={onCancel} className="text-gray-600 hover:text-gray-400 transition-colors shrink-0">
               <X className="w-4 h-4" />
             </button>
           </div>

@@ -1,13 +1,12 @@
 import { X } from 'lucide-react';
 
-// ── 지출 추가 모달 ────────────────────────────────────────────────
-// 버그 수정: 날짜 입력 영역의 레이아웃 오류 해결
-//   - colorScheme: 'dark' 로 네이티브 날짜 위젯 다크 테마 적용
-//   - boxSizing: 'border-box' 로 패딩이 너비를 초과하지 않도록 처리
-//   - block w-full 조합으로 다양한 화면 크기에서 정상 렌더링 보장
-// 명칭 변경: "상품명" → "카테고리"
+// 업데이트 이력:
+// - editMode 프롭 추가: true일 때 '지출 편집' 모드로 전환
+// - 날짜/카테고리/금액/결제수단 입력 필드 모두 block w-full + boxSizing: 'border-box' 적용
+// - 버튼 텍스트를 모드에 따라 '수정하기' / '추가하기' 로 전환
 export default function AddExpenseModal({
   form, paymentMethods, onClose, onFieldChange, onSubmit,
+  editMode = false,
 }) {
   const isValid =
     Boolean(form.name.trim()) &&
@@ -30,7 +29,9 @@ export default function AddExpenseModal({
 
           {/* 모달 헤더 */}
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-base font-bold">지출 추가</h3>
+            <h3 className="text-base font-bold">
+              {editMode ? '지출 편집' : '지출 추가'}
+            </h3>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-300 transition-colors"
@@ -42,7 +43,7 @@ export default function AddExpenseModal({
           {/* 입력 폼 */}
           <div className="space-y-3">
 
-            {/* 날짜 — colorScheme + boxSizing으로 레이아웃 오류 수정 */}
+            {/* 날짜 */}
             <div>
               <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
                 날짜
@@ -56,7 +57,7 @@ export default function AddExpenseModal({
               />
             </div>
 
-            {/* 카테고리 (구: 상품명) */}
+            {/* 카테고리 */}
             <div>
               <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
                 카테고리
@@ -109,13 +110,13 @@ export default function AddExpenseModal({
             </div>
           </div>
 
-          {/* 추가 버튼 */}
+          {/* 제출 버튼 */}
           <button
             onClick={onSubmit}
             disabled={!isValid}
             className="mt-5 w-full py-3.5 bg-violet-600 hover:bg-violet-500 disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-colors"
           >
-            추가하기
+            {editMode ? '수정하기' : '추가하기'}
           </button>
         </div>
       </div>
