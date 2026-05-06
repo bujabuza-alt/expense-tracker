@@ -49,7 +49,7 @@ export default function QuickAddModal({ presets, selDate, onClose, onAddPreset }
                 <button
                   key={p.id}
                   onClick={() => { onAddPreset(p); onClose(); }}
-                  className="w-full flex items-center justify-between p-3.5 bg-gray-800 hover:bg-gray-750 active:scale-[0.98] rounded-xl transition-all border border-transparent hover:border-emerald-800/60"
+                  className="w-full flex items-center justify-between p-3.5 bg-gray-800 hover:bg-gray-700 active:scale-[0.98] rounded-xl transition-all border border-transparent hover:border-emerald-800/60"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl leading-none">{p.emoji}</span>
