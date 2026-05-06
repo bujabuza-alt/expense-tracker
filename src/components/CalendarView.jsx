@@ -2,6 +2,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MONTHS, DAYS } from '../constants';
 import { compact } from '../utils';
 
+// 업데이트 이력:
+// - 캘린더 셀 고정 높이(min-h-[7vh]) → 뷰포트 기반(min-h-[7vh]) 비율 단위로 변경
 export default function CalendarView({
   year, month, calDays, dayTotals, selDate, today,
   onPrev, onNext, onSelectDate,
@@ -46,7 +48,7 @@ export default function CalendarView({
             return (
               <div
                 key={`e-${i}`}
-                className="min-h-[54px] border-b border-r border-gray-800/40"
+                className="min-h-[7vh] border-b border-r border-gray-800/40"
               />
             );
           }
@@ -63,7 +65,7 @@ export default function CalendarView({
               onClick={() => onSelectDate(isSel ? null : ds)}
               className={`
                 relative flex flex-col items-center justify-start
-                min-h-[54px] pt-2 pb-1.5
+                min-h-[7vh] pt-2 pb-1.5
                 border-b border-r border-gray-800/40
                 transition-colors select-none
                 ${isSel ? 'bg-violet-950/60' : 'hover:bg-gray-800/50'}

@@ -1,8 +1,10 @@
 import BudgetCard   from '../BudgetCard';
 import CalendarView from '../CalendarView';
 import DailyPanel   from '../DailyPanel';
-import { fmt }      from '../../utils';
 
+// 업데이트 이력:
+// - 메인 화면에서 '빠른 지출' 프리셋 버튼 섹션 제거 (FAB의 빠른 추가 기능으로 대체)
+// - presets / onAddPreset 프롭 제거
 export default function HomeTab({
   // 예산 관련
   budget, monthTotal,
@@ -11,10 +13,8 @@ export default function HomeTab({
   // 캘린더 관련
   year, month, calDays, dayTotals, selDate, today,
   onPrev, onNext, onSelectDate,
-  // 프리셋 관련
-  presets, onAddPreset,
   // 일별 지출 패널
-  selExpenses, onOpenAddModal, onDeleteExpense,
+  selExpenses, onOpenAddModal, onDeleteExpense, onEditExpense,
 }) {
   return (
     <div className="space-y-4">
@@ -29,26 +29,6 @@ export default function HomeTab({
         onSave={onSaveBudget}
         onCancel={onCancelBudgetEdit}
       />
-
-      {/* 빠른 추가 프리셋 버튼 목록 */}
-      <section className="space-y-2">
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-          빠른 추가 → {selDate ?? '오늘'}
-        </p>
-        <div className="flex gap-2 flex-wrap">
-          {presets.map(p => (
-            <button
-              key={p.id}
-              onClick={() => onAddPreset(p)}
-              className="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 active:scale-95 border border-gray-800 hover:border-violet-700 rounded-xl px-3 py-2 text-xs transition-all"
-            >
-              <span>{p.emoji}</span>
-              <span className="text-gray-300">{p.name}</span>
-              <span className="text-violet-400 font-bold">₩{fmt(p.amount)}</span>
-            </button>
-          ))}
-        </div>
-      </section>
 
       {/* 캘린더 */}
       <CalendarView
@@ -66,6 +46,7 @@ export default function HomeTab({
           selExpenses={selExpenses}
           onAddExpense={onOpenAddModal}
           onDeleteExpense={onDeleteExpense}
+          onEditExpense={onEditExpense}
         />
       )}
     </div>

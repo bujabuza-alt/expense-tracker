@@ -15,6 +15,12 @@ import PaymentTab  from './components/tabs/PaymentTab';
 import AnalysisTab from './components/tabs/AnalysisTab';
 import SettingsTab from './components/tabs/SettingsTab';
 
+// 업데이트 이력:
+// - HomeTab에서 presets/onAddPreset 프롭 제거 (빠른 추가 섹션 제거에 따른 정리)
+// - 지출 편집 기능 추가: editingExpense 상태, showEditModal 상태, editForm 상태 추가
+// - updateExpense 핸들러 구현 (id 기준으로 기존 항목 교체)
+// - openEditModal: 선택한 지출 데이터를 편집 폼에 사전 세팅
+// - HomeTab, SearchTab 에 onEditExpense 프롭 전달
 // ================================================================
 // 메인 앱 컴포넌트 — 전역 상태 관리 및 렌더 조율
 // ================================================================
@@ -52,6 +58,16 @@ export default function App() {
     name:          '',
     amount:        '',
     paymentMethod: paymentMethods[0] ?? '',
+  });
+
+  // ── 지출 편집 상태 ────────────────────────────────────────────
+  const [showEditModal,   setShowEditModal]   = useState(false);
+  const [editingExpense,  setEditingExpense]  = useState(null);
+  const [editForm,        setEditForm]        = useState({
+    date:          '',
+    name:          '',
+    amount:        '',
+    paymentMethod: '',
   });
 
   // ── 로컬스토리지 자동 동기화 ──────────────────────────────────
@@ -137,6 +153,36 @@ export default function App() {
     setShowAddModal(false);
   };
 
+  // 지출 편집 모달 열기 (기존 데이터 사전 세팅)
+  const openEditModal = (expense) => {
+    setEditingExpense(expense);
+    setEditForm({
+      date:          expense.date,
+      name:          expense.name,
+      amount:        String(expense.amount),
+      paymentMethod: expense.paymentMethod,
+    });
+    setShowEditModal(true);
+  };
+
+  // 지출 수정 저장 (id 기준으로 기존 항목 교체 후 즉시 반영)
+  const updateExpense = () => {
+    const amount = parseFloat(editForm.amount);
+    if (!editForm.name.trim() || isNaN(amount) || amount <= 0) return;
+    setExpenses(prev => prev.map(e =>
+      e.id === editingExpense.id
+        ? { ...e,
+            date:          editForm.date,
+            name:          editForm.name.trim(),
+            amount,
+            paymentMethod: editForm.paymentMethod,
+          }
+        : e
+    ));
+    setShowEditModal(false);
+    setEditingExpense(null);
+  };
+
   // 프리셋으로 즉시 추가 (선택 날짜 우선, 없으면 오늘)
   const addPreset = (preset) => {
     setExpenses(prev => [...prev, {
@@ -203,10 +249,10 @@ export default function App() {
             selDate={selDate} today={TODAY}
             onPrev={goPrev} onNext={goNext}
             onSelectDate={setSelDate}
-            presets={presets} onAddPreset={addPreset}
             selExpenses={selExpenses}
             onOpenAddModal={openAddModal}
             onDeleteExpense={deleteExpense}
+            onEditExpense={openEditModal}
           />
         )}
 
@@ -215,6 +261,7 @@ export default function App() {
             expenses={expenses}
             paymentMethods={paymentMethods}
             onDeleteExpense={deleteExpense}
+            onEditExpense={openEditModal}
           />
         )}
 
@@ -266,6 +313,18 @@ export default function App() {
           onClose={() => setShowAddModal(false)}
           onFieldChange={(field, value) => setForm(f => ({ ...f, [field]: value }))}
           onSubmit={addExpense}
+        />
+      )}
+
+      {/* 지출 편집 모달 */}
+      {showEditModal && (
+        <AddExpenseModal
+          editMode
+          form={editForm}
+          paymentMethods={paymentMethods}
+          onClose={() => { setShowEditModal(false); setEditingExpense(null); }}
+          onFieldChange={(field, value) => setEditForm(f => ({ ...f, [field]: value }))}
+          onSubmit={updateExpense}
         />
       )}
 

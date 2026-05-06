@@ -1,7 +1,9 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { fmt } from '../utils';
 
-export default function DailyPanel({ selDate, selExpenses, onAddExpense, onDeleteExpense }) {
+// 업데이트 이력:
+// - onEditExpense 프롭 추가 및 각 지출 항목에 편집(연필) 버튼 추가
+export default function DailyPanel({ selDate, selExpenses, onAddExpense, onDeleteExpense, onEditExpense }) {
   const total = selExpenses.reduce((s, e) => s + e.amount, 0);
 
   return (
@@ -33,6 +35,15 @@ export default function DailyPanel({ selDate, selExpenses, onAddExpense, onDelet
                 </div>
                 <div className="flex items-center gap-2 ml-3 shrink-0">
                   <span className="text-sm font-bold text-rose-400">₩{fmt(e.amount)}</span>
+                  {onEditExpense && (
+                    <button
+                      onClick={() => onEditExpense(e)}
+                      className="text-gray-600 hover:text-violet-400 transition-colors"
+                      aria-label="편집"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     onClick={() => onDeleteExpense(e.id)}
                     className="text-gray-700 hover:text-red-400 transition-colors"
