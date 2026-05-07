@@ -6,6 +6,8 @@ import { fmt } from '../../utils';
 // - 기간 필터에 월별 프리셋 버튼 추가 (이번 달, 지난 달, 2달 전, 3달 전)
 // - 검색 결과 항목에 편집(연필) 버튼 추가
 // - onEditExpense 프롭 추가
+// - 레이아웃 수정: 프리셋 버튼을 grid-cols-4 로 교체하여 버튼·날짜입력 겹침 해결
+// - 날짜 입력 grid 셀에 min-w-0 래퍼 추가로 overflow 차단
 
 // YYYY-MM-DD 문자열 반환 헬퍼
 const toIso = (date) => {
@@ -112,14 +114,14 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             기간
           </label>
 
-          {/* 월별 프리셋 버튼 */}
-          <div className="flex gap-1.5 flex-wrap mb-2">
+          {/* 월별 프리셋 버튼 — grid-cols-4 로 고정하여 줄바꿈 없이 정렬 */}
+          <div className="grid grid-cols-4 gap-1.5 mb-2">
             {MONTH_PRESETS.map(({ label, ago }) => (
               <button
                 key={ago}
                 onClick={() => applyMonthPreset(ago)}
                 className={`
-                  text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all
+                  text-[11px] font-semibold px-1 py-1.5 rounded-lg border transition-all text-center
                   ${activePreset === ago
                     ? 'bg-violet-600 border-violet-500 text-white'
                     : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-violet-600 hover:text-violet-300'}
@@ -130,21 +132,26 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             ))}
           </div>
 
+          {/* 날짜 범위 입력 — min-w-0 래퍼로 overflow 차단 */}
           <div className="grid grid-cols-2 gap-2">
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={e => handleDateFromChange(e.target.value)}
-              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
-            />
-            <input
-              type="date"
-              value={dateTo}
-              onChange={e => handleDateToChange(e.target.value)}
-              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
-            />
+            <div className="min-w-0">
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={e => handleDateFromChange(e.target.value)}
+                style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
+              />
+            </div>
+            <div className="min-w-0">
+              <input
+                type="date"
+                value={dateTo}
+                onChange={e => handleDateToChange(e.target.value)}
+                style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
+              />
+            </div>
           </div>
           {dateFrom && dateTo && (
             <p className="text-[10px] text-gray-600 mt-1 pl-0.5">
