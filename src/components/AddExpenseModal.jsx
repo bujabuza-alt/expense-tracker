@@ -27,7 +27,7 @@ export default function AddExpenseModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-gray-900 rounded-t-3xl shadow-2xl animate-slide-up overflow-hidden"
+        className="w-full max-w-md bg-gray-900 rounded-t-3xl shadow-2xl animate-slide-up"
         style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
         onClick={e => e.stopPropagation()}
       >
