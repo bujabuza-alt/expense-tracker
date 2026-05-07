@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 
 import { DEFAULT_PAYMENT_METHODS, DEFAULT_PRESETS } from './constants';
 import { TODAY, uid, ls }                           from './utils';
+import { useTheme }                                 from './context/ThemeContext';
 
 import Header          from './components/Header';
 import BottomNav       from './components/BottomNav';
@@ -21,11 +22,13 @@ import SettingsTab from './components/tabs/SettingsTab';
 // - updateExpense 핸들러 구현 (id 기준으로 기존 항목 교체)
 // - openEditModal: 선택한 지출 데이터를 편집 폼에 사전 세팅
 // - HomeTab, SearchTab 에 onEditExpense 프롭 전달
+// - Japan 모드 테마 지원: ThemeContext 연동, data-theme 속성 적용, SettingsTab에 테마 제어 프롭 전달
 // ================================================================
 // 메인 앱 컴포넌트 — 전역 상태 관리 및 렌더 조율
 // ================================================================
 export default function App() {
   const now = new Date();
+  const { theme, setTheme } = useTheme();
 
   // ── 캘린더 뷰 (연/월) ─────────────────────────────────────────
   const [year,  setYear]  = useState(now.getFullYear());
@@ -226,6 +229,7 @@ export default function App() {
 
   return (
     <div
+      data-theme={theme}
       className="min-h-screen bg-gray-950 text-white"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
@@ -288,6 +292,8 @@ export default function App() {
             presets={presets}
             onUpdatePaymentMethods={setPaymentMethods}
             onUpdatePresets={setPresets}
+            theme={theme}
+            onThemeChange={setTheme}
           />
         )}
       </div>

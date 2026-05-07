@@ -404,14 +404,72 @@ function PresetsSection({ presets, paymentMethods, onUpdate }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// 테마 선택 섹션
+// 업데이트 이력:
+// - Japan 모드 토글 추가: 다크 모드 / 재팬 모드 선택 UI 구현
+// ═══════════════════════════════════════════════════════════════
+function ThemeSection({ theme, onThemeChange }) {
+  return (
+    <section className="bg-gray-900 rounded-2xl p-4 space-y-3">
+      <h3 className="text-sm font-bold text-gray-200">테마 설정</h3>
+
+      <div className="flex gap-3">
+        {/* Dark Mode button */}
+        <button
+          onClick={() => onThemeChange('dark')}
+          className={`
+            flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2
+            text-xs font-bold transition-all
+            ${theme === 'dark'
+              ? 'bg-gray-800 border-violet-500 text-violet-400'
+              : 'bg-gray-800 border-gray-700 text-gray-500 hover:border-gray-600'}
+          `}
+        >
+          <span className="text-2xl leading-none">🌙</span>
+          다크 모드
+        </button>
+
+        {/* Japan Mode button — uses inline styles to remain visually correct in either theme */}
+        <button
+          onClick={() => onThemeChange('japan')}
+          style={
+            theme === 'japan'
+              ? { backgroundColor: '#FCE2E1', borderColor: '#C96480', color: '#C96480' }
+              : {}
+          }
+          className={`
+            flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2
+            text-xs font-bold transition-all
+            ${theme === 'japan'
+              ? ''
+              : 'bg-gray-800 border-gray-700 text-gray-500 hover:border-gray-600'}
+          `}
+        >
+          <span className="text-2xl leading-none">🌸</span>
+          재팬 모드
+        </button>
+      </div>
+
+      {theme === 'japan' && (
+        <p className="text-[10px] text-center" style={{ color: '#C96480' }}>
+          벚꽃 핑크 · 화지(和紙) 테마가 적용되었습니다
+        </p>
+      )}
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // 설정 탭 루트 컴포넌트
 // ═══════════════════════════════════════════════════════════════
 export default function SettingsTab({
   paymentMethods, presets,
   onUpdatePaymentMethods, onUpdatePresets,
+  theme, onThemeChange,
 }) {
   return (
     <div className="space-y-4">
+      <ThemeSection theme={theme} onThemeChange={onThemeChange} />
       <PaymentMethodsSection
         paymentMethods={paymentMethods}
         onUpdate={onUpdatePaymentMethods}

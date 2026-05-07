@@ -48,19 +48,122 @@ input[type="date"]::-webkit-datetime-edit {
     animation: slideUp 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
   }
 
-  /* FAB 첫 번째 아이템 (일반 추가) */
+  /* FAB first item (general add) */
   .animate-fab-item-1 {
     animation: fabPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
-  /* FAB 두 번째 아이템 (빠른 추가) — 약간 지연 */
+  /* FAB second item (quick add) — slight delay */
   .animate-fab-item-2 {
     opacity: 0;
     animation: fabPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.07s forwards;
   }
 
-  /* FAB 오버레이 배경 페이드인 */
+  /* FAB overlay background fade-in */
   .animate-fade-in {
     animation: fadeIn 0.15s ease-out forwards;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   업데이트 이력:
+   - Japan 모드 테마 추가: [data-theme="japan"] 셀렉터로 Tailwind 클래스 오버라이드
+   - 벚꽃 핑크(#FCE2E1) · 화지 흰색(#FAF5F0) · 사쿠라 로즈(#C96480) 컬러 팔레트 적용
+   - 다크 모드용 gray/violet 계열 색상을 일본 전통 색상으로 전환
+   - date 입력의 color-scheme을 Japan 모드에서 light로 강제 전환
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Root & Page Background ──────────────────────────────────── */
+[data-theme="japan"]              { background-color: #FAF5F0; color: #1a1a2e; }
+[data-theme="japan"] .bg-gray-950 { background-color: #FAF5F0; }
+
+/* ── Card / Panel Backgrounds (with subtle washi paper texture) ─ */
+[data-theme="japan"] .bg-gray-900 {
+  background-color: #FCE2E1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ── Input / List Item Backgrounds ──────────────────────────── */
+[data-theme="japan"] .bg-gray-800 { background-color: #FFFFFF; }
+[data-theme="japan"] .bg-gray-700 { background-color: #FFF0EF; }
+
+/* ── Text Colors ─────────────────────────────────────────────── */
+[data-theme="japan"] .text-white    { color: #1a1a2e !important; }
+[data-theme="japan"] .text-gray-100 { color: #1a1a2e; }
+[data-theme="japan"] .text-gray-200 { color: #2d1f2d; }
+[data-theme="japan"] .text-gray-300 { color: #5c3d5e; }
+[data-theme="japan"] .text-gray-400 { color: #7a5c7a; }
+[data-theme="japan"] .text-gray-500 { color: #9b7fa0; }
+[data-theme="japan"] .text-gray-600 { color: #c4a8c8; }
+
+/* ── Accent: Violet → Sakura Rose ───────────────────────────── */
+[data-theme="japan"] .text-violet-400  { color: #C96480; }
+[data-theme="japan"] .text-violet-300  { color: #d4799a; }
+[data-theme="japan"] .bg-violet-600    { background-color: #C96480; }
+[data-theme="japan"] .bg-violet-500    { background-color: #d4799a; }
+[data-theme="japan"] .bg-violet-700    { background-color: #B8506E; }
+[data-theme="japan"] .border-violet-500 { border-color: #C96480; }
+[data-theme="japan"] .ring-violet-400  { --tw-ring-color: #C96480; }
+
+/* ── Expense amount: Rose stays legible but shifts to sakura ─── */
+[data-theme="japan"] .text-rose-400 { color: #C96480; }
+[data-theme="japan"] .text-rose-300 { color: #B8506E; }
+
+/* ── Border Colors ───────────────────────────────────────────── */
+[data-theme="japan"] .border-gray-700 { border-color: #E8C9C9; }
+[data-theme="japan"] .border-gray-800 { border-color: #F0D9D8; }
+
+/* ── Opacity-variant Backgrounds ────────────────────────────── */
+[data-theme="japan"] .bg-violet-900\/30  { background-color: rgba(201,100,128,0.12); }
+[data-theme="japan"] .bg-violet-950\/60  { background-color: rgba(201,100,128,0.15); }
+[data-theme="japan"] .bg-violet-600\/20  { background-color: rgba(201,100,128,0.12); }
+[data-theme="japan"] .bg-gray-800\/50    { background-color: rgba(255,255,255,0.65); }
+
+/* ── Opacity-variant Borders ─────────────────────────────────── */
+[data-theme="japan"] .border-gray-800\/40  { border-color: rgba(232,201,201,0.5); }
+[data-theme="japan"] .border-gray-700\/60  { border-color: rgba(232,201,201,0.6); }
+[data-theme="japan"] .border-violet-500\/60 { border-color: rgba(201,100,128,0.55); }
+
+/* ── Progress Bar Track ──────────────────────────────────────── */
+[data-theme="japan"] .bg-gray-800.rounded-full { background-color: #F0D9D8; }
+
+/* ── Calendar empty-day dot: emerald → sakura blush ─────────── */
+[data-theme="japan"] .bg-emerald-500\/70 { background-color: rgba(201,100,128,0.35); }
+
+/* ── Divider Lines ───────────────────────────────────────────── */
+[data-theme="japan"] .divide-gray-800\/60 > * + * { border-color: rgba(232,201,201,0.5); }
+
+/* ── Hover States ────────────────────────────────────────────── */
+[data-theme="japan"] .hover\:bg-gray-800:hover        { background-color: rgba(240,217,216,0.55); }
+[data-theme="japan"] .hover\:bg-gray-800\/50:hover    { background-color: rgba(255,255,255,0.75); }
+[data-theme="japan"] .hover\:bg-gray-600:hover        { background-color: #F5E6E5; }
+[data-theme="japan"] .hover\:bg-violet-900\/50:hover  { background-color: rgba(201,100,128,0.22); }
+[data-theme="japan"] .hover\:bg-violet-500:hover      { background-color: #d4799a; }
+[data-theme="japan"] .hover\:text-gray-400:hover      { color: #7a5c7a; }
+[data-theme="japan"] .hover\:text-gray-300:hover      { color: #5c3d5e; }
+[data-theme="japan"] .hover\:text-violet-400:hover    { color: #C96480; }
+[data-theme="japan"] .hover\:text-violet-300:hover    { color: #d4799a; }
+[data-theme="japan"] .hover\:text-red-400:hover       { color: #d95f6b; }
+[data-theme="japan"] .hover\:border-violet-600:hover  { border-color: #C96480; }
+[data-theme="japan"] .hover\:border-gray-600:hover    { border-color: #D4AAAA; }
+
+/* ── Focus States ────────────────────────────────────────────── */
+[data-theme="japan"] .focus\:border-violet-500:focus { border-color: #C96480; }
+
+/* ── Disabled States ─────────────────────────────────────────── */
+[data-theme="japan"] .disabled\:bg-gray-800:disabled   { background-color: #F0D9D8; }
+[data-theme="japan"] .disabled\:text-gray-600:disabled { color: #c4a8c8; }
+[data-theme="japan"] .disabled\:bg-gray-700:disabled   { background-color: #FFF0EF; }
+
+/* ── Date Input: force light color scheme for native picker ──── */
+[data-theme="japan"] input[type="date"] { color-scheme: light !important; }
+
+/* ── Placeholder Text ────────────────────────────────────────── */
+[data-theme="japan"] input::placeholder,
+[data-theme="japan"] textarea::placeholder { color: #c4a8c8; }
+
+/* ── Select Dropdown Options ─────────────────────────────────── */
+[data-theme="japan"] select option { background-color: #FFFFFF; color: #1a1a2e; }
+
+/* ── Violet text on calendar (today) ────────────────────────── */
+[data-theme="japan"] .text-violet-300 { color: #C96480; }
