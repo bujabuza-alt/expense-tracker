@@ -132,26 +132,22 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             ))}
           </div>
 
-          {/* 날짜 범위 입력 — min-w-0 래퍼로 overflow 차단 */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="min-w-0">
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={e => handleDateFromChange(e.target.value)}
-                style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
-              />
-            </div>
-            <div className="min-w-0">
-              <input
-                type="date"
-                value={dateTo}
-                onChange={e => handleDateToChange(e.target.value)}
-                style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-sm text-white outline-none transition-colors"
-              />
-            </div>
+          {/* 날짜 범위 입력 — 세로 스택으로 full-width 보장 */}
+          <div className="flex flex-col gap-2">
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={e => handleDateFromChange(e.target.value)}
+              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+            />
+            <input
+              type="date"
+              value={dateTo}
+              onChange={e => handleDateToChange(e.target.value)}
+              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+            />
           </div>
           {dateFrom && dateTo && (
             <p className="text-[10px] text-gray-600 mt-1 pl-0.5">
