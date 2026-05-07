@@ -32,6 +32,17 @@
   to   { opacity: 1; }
 }
 
+/* 업데이트 이력: iOS Safari date 입력칸 내부 가상 요소 높이 팽창 버그 수정 */
+/* -webkit-date-and-time-value 의 기본 min-height 가 입력칸을 비정상적으로 크게 만드는 문제 해결 */
+input[type="date"]::-webkit-date-and-time-value {
+  min-height: 0;
+  line-height: normal;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+  padding-block: 0;
+}
+
 @layer utilities {
   .animate-slide-up {
     animation: slideUp 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;

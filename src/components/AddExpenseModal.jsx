@@ -53,7 +53,7 @@ export default function AddExpenseModal({
                 value={form.date}
                 onChange={e => onFieldChange('date', e.target.value)}
                 style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 h-10 text-sm text-white outline-none transition-colors"
               />
             </div>
 

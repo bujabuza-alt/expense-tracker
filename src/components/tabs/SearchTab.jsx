@@ -136,14 +136,14 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
               value={dateFrom}
               onChange={e => handleDateFromChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-xs text-white outline-none transition-colors"
+              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 h-10 text-sm text-white outline-none transition-colors"
             />
             <input
               type="date"
               value={dateTo}
               onChange={e => handleDateToChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 py-2.5 text-xs text-white outline-none transition-colors"
+              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-2.5 h-10 text-sm text-white outline-none transition-colors"
             />
           </div>
           {dateFrom && dateTo && (
