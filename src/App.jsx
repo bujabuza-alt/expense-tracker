@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { DEFAULT_PAYMENT_METHODS, DEFAULT_PRESETS } from './constants';
-import { TODAY, uid, ls }                           from './utils';
+import { TODAY, uid, ls, addMonths }                from './utils';
 import { useTheme }                                 from './context/ThemeContext';
 
 import Header          from './components/Header';
@@ -23,6 +23,8 @@ import SettingsTab from './components/tabs/SettingsTab';
 // - openEditModal: 선택한 지출 데이터를 편집 폼에 사전 세팅
 // - HomeTab, SearchTab 에 onEditExpense 프롭 전달
 // - Japan 모드 테마 지원: ThemeContext 연동, data-theme 속성 적용, SettingsTab에 테마 제어 프롭 전달
+// - 할부 결제 기능: form에 installmentMonths 추가, addExpense에서 개월 수만큼 항목 자동 생성
+//   (금액 균등 분할, 첫 달에 나머지 원 합산, addMonths로 월말 날짜 자동 보정)
 // ================================================================
 // 메인 앱 컴포넌트 — 전역 상태 관리 및 렌더 조율
 // ================================================================
@@ -57,10 +59,11 @@ export default function App() {
 
   // ── 지출 추가 폼 ──────────────────────────────────────────────
   const [form, setForm] = useState({
-    date:          TODAY,
-    name:          '',
-    amount:        '',
-    paymentMethod: paymentMethods[0] ?? '',
+    date:              TODAY,
+    name:              '',
+    amount:            '',
+    paymentMethod:     paymentMethods[0] ?? '',
+    installmentMonths: '1',
   });
 
   // ── 지출 편집 상태 ────────────────────────────────────────────
@@ -134,25 +137,44 @@ export default function App() {
   const openAddModal = (date = TODAY) => {
     setForm({
       date,
-      name:          '',
-      amount:        '',
-      paymentMethod: paymentMethods[0] ?? '',
+      name:              '',
+      amount:            '',
+      paymentMethod:     paymentMethods[0] ?? '',
+      installmentMonths: '1',
     });
     setShowAddModal(true);
     setFabOpen(false);
   };
 
-  // 새 지출 저장
+  // 새 지출 저장 (할부 지원)
   const addExpense = () => {
-    const amount = parseFloat(form.amount);
+    const amount       = parseFloat(form.amount);
+    const installments = Math.max(1, parseInt(form.installmentMonths, 10) || 1);
     if (!form.name.trim() || isNaN(amount) || amount <= 0) return;
-    setExpenses(prev => [...prev, {
-      id:            uid(),
-      date:          form.date,
-      name:          form.name.trim(),
-      amount,
-      paymentMethod: form.paymentMethod,
-    }]);
+
+    if (installments <= 1) {
+      // 일반 단건 저장
+      setExpenses(prev => [...prev, {
+        id:            uid(),
+        date:          form.date,
+        name:          form.name.trim(),
+        amount,
+        paymentMethod: form.paymentMethod,
+      }]);
+    } else {
+      // 할부: 총액을 개월수로 균등 분할, 나머지는 첫 달에 합산
+      const perMonth  = Math.floor(amount / installments);
+      const remainder = amount - perMonth * installments;
+      const entries   = Array.from({ length: installments }, (_, i) => ({
+        id:            uid(),
+        date:          addMonths(form.date, i),
+        name:          `${form.name.trim()} (${i + 1}/${installments}개월)`,
+        amount:        i === 0 ? perMonth + remainder : perMonth,
+        paymentMethod: form.paymentMethod,
+      }));
+      setExpenses(prev => [...prev, ...entries]);
+    }
+
     setShowAddModal(false);
   };
 
