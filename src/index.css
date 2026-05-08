@@ -32,22 +32,9 @@
   to   { opacity: 1; }
 }
 
-/* iOS Safari date 입력칸 높이 팽창 버그 — 모든 관련 가상 요소 강제 초기화 */
+/* iOS Safari date 입력칸 높이 팽창 버그 — overflow:hidden으로 내부 shadow DOM 팽창 차단 */
 input[type="date"] {
-  min-height: 0;
-}
-input[type="date"]::-webkit-date-and-time-value {
-  min-height: 0;
-  height: 1.25rem;
-  line-height: 1.25rem;
-}
-input[type="date"]::-webkit-datetime-edit {
-  padding-block: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-input[type="date"]::-webkit-datetime-edit-fields-wrapper {
-  padding: 0;
+  overflow: hidden;
 }
 
 @layer utilities {
