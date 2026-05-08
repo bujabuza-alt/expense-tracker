@@ -90,7 +90,7 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
 
         {/* 카테고리 검색어 */}
         <div>
-          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
             카테고리
           </label>
           <input
@@ -109,7 +109,7 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
           </label>
 
           {/* 월별 프리셋 버튼 — grid-cols-4 로 고정하여 줄바꿈 없이 정렬 */}
-          <div className="grid grid-cols-4 gap-1.5 mb-2">
+          <div className="grid grid-cols-4 gap-1.5 mb-3">
             {MONTH_PRESETS.map(({ label, ago }) => (
               <button
                 key={ago}
@@ -126,24 +126,35 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             ))}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={e => handleDateFromChange(e.target.value)}
-              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
-              className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
-            />
-            <input
-              type="date"
-              value={dateTo}
-              onChange={e => handleDateToChange(e.target.value)}
-              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
-              className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
-            />
+          {/* 시작일/종료일 레이블 추가 — 빈 박스로 보이는 ghost container 문제 해결 */}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <span className="block text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                시작일
+              </span>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={e => handleDateFromChange(e.target.value)}
+                style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
+                className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm leading-5 text-white outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <span className="block text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                종료일
+              </span>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={e => handleDateToChange(e.target.value)}
+                style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
+                className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm leading-5 text-white outline-none transition-colors"
+              />
+            </div>
           </div>
           {dateFrom && dateTo && (
-            <p className="text-[10px] text-gray-600 mt-1 pl-0.5">
+            <p className="text-[10px] text-gray-600 mt-1.5 pl-0.5">
               {dateFrom} ~ {dateTo}
             </p>
           )}
@@ -151,7 +162,7 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
 
         {/* 결제 수단 필터 */}
         <div>
-          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
             결제 수단
           </label>
           <select

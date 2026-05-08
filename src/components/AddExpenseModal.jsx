@@ -45,12 +45,12 @@ export default function AddExpenseModal({
             </button>
           </div>
 
-          {/* 입력 폼 */}
-          <div className="space-y-3">
+          {/* 입력 폼 — space-y-4로 필드 간 간격 확보 */}
+          <div className="space-y-4">
 
             {/* 날짜 */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                 날짜
               </label>
               <input
@@ -58,13 +58,13 @@ export default function AddExpenseModal({
                 value={form.date}
                 onChange={e => onFieldChange('date', e.target.value)}
                 style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
-                className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+                className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm leading-5 text-white outline-none transition-colors"
               />
             </div>
 
             {/* 카테고리 */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                 카테고리
               </label>
               <input
@@ -80,7 +80,7 @@ export default function AddExpenseModal({
 
             {/* 금액 */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                 금액 (원)
               </label>
               <input
@@ -98,7 +98,7 @@ export default function AddExpenseModal({
             {/* 할부 개월 — 추가 모드 전용 */}
             {!editMode && (
               <div>
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                   할부 개월
                 </label>
                 <input
@@ -126,7 +126,7 @@ export default function AddExpenseModal({
 
             {/* 결제 수단 */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                 결제 수단
               </label>
               <select
