@@ -117,8 +117,8 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 [data-theme="japan"] .text-rose-300 { color: #B8506E; }
 
 /* ── Border Colors ───────────────────────────────────────────── */
-[data-theme="japan"] .border-gray-700 { border-color: #E8C9C9; }
-[data-theme="japan"] .border-gray-800 { border-color: #F0D9D8; }
+[data-theme="japan"] .border-gray-700 { border-color: #C8A0B0; }
+[data-theme="japan"] .border-gray-800 { border-color: #E0C0C8; }
 
 /* ── Opacity-variant Backgrounds ────────────────────────────── */
 [data-theme="japan"] .bg-violet-900\/30  { background-color: rgba(201,100,128,0.12); }
@@ -155,7 +155,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 [data-theme="japan"] .hover\:border-gray-600:hover    { border-color: #D4AAAA; }
 
 /* ── Focus States ────────────────────────────────────────────── */
-[data-theme="japan"] .focus\:border-violet-500:focus { border-color: #C96480; }
+[data-theme="japan"] .focus\:border-violet-500:focus { border-color: #9B6EA8; }
 
 /* ── Disabled States ─────────────────────────────────────────── */
 [data-theme="japan"] .disabled\:bg-gray-800:disabled   { background-color: #F0D9D8; }

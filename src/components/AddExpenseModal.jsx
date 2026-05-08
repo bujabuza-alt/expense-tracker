@@ -1,15 +1,12 @@
 import { X } from 'lucide-react';
 import { fmt } from '../utils';
+import { useTheme } from '../context/ThemeContext';
 
-// 업데이트 이력:
-// - editMode 프롭 추가: true일 때 '지출 편집' 모드로 전환
-// - 날짜/카테고리/금액/결제수단 입력 필드 모두 block w-full + boxSizing: 'border-box' 적용
-// - 버튼 텍스트를 모드에 따라 '수정하기' / '추가하기' 로 전환
-// - 할부 개월 입력 필드 추가 (추가 모드 전용): 2개월 이상 입력 시 월 납입액 미리보기 표시
 export default function AddExpenseModal({
   form, paymentMethods, onClose, onFieldChange, onSubmit,
   editMode = false,
 }) {
+  const { theme } = useTheme();
   const installments  = Math.max(1, parseInt(form.installmentMonths, 10) || 1);
   const totalAmount   = parseFloat(form.amount) || 0;
   const perMonth      = installments > 1 && totalAmount > 0
@@ -60,7 +57,7 @@ export default function AddExpenseModal({
                 type="date"
                 value={form.date}
                 onChange={e => onFieldChange('date', e.target.value)}
-                style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+                style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
                 className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
               />
             </div>
