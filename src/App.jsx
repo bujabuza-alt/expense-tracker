@@ -190,20 +190,46 @@ export default function App() {
     setShowEditModal(true);
   };
 
-  // 지출 수정 저장 (id 기준으로 기존 항목 교체 후 즉시 반영)
+  // 지출 수정 저장 — 할부 항목이면 이후 동일 그룹에도 이름·결제수단·금액 전파
   const updateExpense = () => {
     const amount = parseFloat(editForm.amount);
     if (!editForm.name.trim() || isNaN(amount) || amount <= 0) return;
-    setExpenses(prev => prev.map(e =>
-      e.id === editingExpense.id
-        ? { ...e,
-            date:          editForm.date,
-            name:          editForm.name.trim(),
-            amount,
-            paymentMethod: editForm.paymentMethod,
-          }
-        : e
-    ));
+
+    const installmentMatch = editingExpense.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
+
+    if (installmentMatch) {
+      const [, origBase, currentIdxStr, totalStr] = installmentMatch;
+      const currentIdx = parseInt(currentIdxStr, 10);
+      const total      = parseInt(totalStr, 10);
+
+      // 편집 폼 이름에서 새 베이스명 추출 (패턴 포함 여부 무관)
+      const newNameMatch = editForm.name.trim().match(/^(.+) \(\d+\/\d+개월\)$/);
+      const newBase = newNameMatch ? newNameMatch[1] : editForm.name.trim();
+
+      setExpenses(prev => prev.map(e => {
+        if (e.id === editingExpense.id) {
+          return { ...e, date: editForm.date, name: editForm.name.trim(), amount, paymentMethod: editForm.paymentMethod };
+        }
+        const sub = e.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
+        if (
+          sub &&
+          sub[1] === origBase &&
+          parseInt(sub[3], 10) === total &&
+          parseInt(sub[2], 10) > currentIdx
+        ) {
+          const k = parseInt(sub[2], 10);
+          return { ...e, name: `${newBase} (${k}/${total}개월)`, paymentMethod: editForm.paymentMethod, amount };
+        }
+        return e;
+      }));
+    } else {
+      setExpenses(prev => prev.map(e =>
+        e.id === editingExpense.id
+          ? { ...e, date: editForm.date, name: editForm.name.trim(), amount, paymentMethod: editForm.paymentMethod }
+          : e
+      ));
+    }
+
     setShowEditModal(false);
     setEditingExpense(null);
   };
