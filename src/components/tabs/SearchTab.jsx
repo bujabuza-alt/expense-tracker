@@ -132,21 +132,21 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             ))}
           </div>
 
-          {/* 날짜 범위 입력 — 세로 스택으로 full-width 보장 */}
+          {/* 날짜 범위 입력 — 세로 스택, 다른 입력칸과 동일한 높이 */}
           <div className="flex flex-col gap-2">
             <input
               type="date"
               value={dateFrom}
               onChange={e => handleDateFromChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+              className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
             <input
               type="date"
               value={dateTo}
               onChange={e => handleDateToChange(e.target.value)}
               style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
-              className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+              className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
           </div>
           {dateFrom && dateTo && (

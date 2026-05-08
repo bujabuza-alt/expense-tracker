@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Pencil } from 'lucide-react';
+import { Plus, Trash2, Check, X, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { uid, fmt } from '../../utils';
 
 // ═══════════════════════════════════════════════════════════════
@@ -10,6 +10,14 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
   const [newPM,     setNewPM]     = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editDraft, setEditDraft] = useState('');
+
+  const movePM = (idx, dir) => {
+    const next = idx + dir;
+    if (next < 0 || next >= paymentMethods.length) return;
+    const arr = [...paymentMethods];
+    [arr[idx], arr[next]] = [arr[next], arr[idx]];
+    onUpdate(arr);
+  };
 
   const addPM = () => {
     const v = newPM.trim();
@@ -78,7 +86,7 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
 
       {/* 결제 수단 목록 */}
       <ul className="space-y-2">
-        {paymentMethods.map(pm => (
+        {paymentMethods.map((pm, idx) => (
           <li key={pm} className="flex items-center justify-between p-3 bg-gray-800 rounded-xl">
             {editingId === pm ? (
               <div className="flex-1 flex gap-2">
@@ -110,6 +118,24 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
               <>
                 <span className="text-sm text-gray-200 font-medium">{pm}</span>
                 <div className="flex items-center gap-1">
+                  <div className="flex flex-col mr-1">
+                    <button
+                      onClick={() => movePM(idx, -1)}
+                      disabled={idx === 0}
+                      className="p-0.5 text-gray-600 hover:text-gray-400 disabled:opacity-20 transition-colors"
+                      aria-label="위로"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => movePM(idx, 1)}
+                      disabled={idx === paymentMethods.length - 1}
+                      className="p-0.5 text-gray-600 hover:text-gray-400 disabled:opacity-20 transition-colors"
+                      aria-label="아래로"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                   <button
                     onClick={() => startEdit(pm)}
                     className="p-1.5 text-gray-600 hover:text-violet-400 transition-colors"
@@ -191,6 +217,14 @@ function PresetsSection({ presets, paymentMethods, onUpdate }) {
   };
 
   const removePreset = (id) => onUpdate(presets.filter(p => p.id !== id));
+
+  const movePreset = (idx, dir) => {
+    const next = idx + dir;
+    if (next < 0 || next >= presets.length) return;
+    const arr = [...presets];
+    [arr[idx], arr[next]] = [arr[next], arr[idx]];
+    onUpdate(arr);
+  };
 
   return (
     <section className="bg-gray-900 rounded-2xl p-4 space-y-3">
@@ -303,7 +337,7 @@ function PresetsSection({ presets, paymentMethods, onUpdate }) {
         </div>
       ) : (
         <ul className="space-y-2">
-          {presets.map(p => (
+          {presets.map((p, idx) => (
             <li key={p.id} className="bg-gray-800 rounded-xl overflow-hidden">
               {editingId === p.id ? (
                 /* 인라인 편집 폼 */
@@ -378,6 +412,24 @@ function PresetsSection({ presets, paymentMethods, onUpdate }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
+                    <div className="flex flex-col mr-1">
+                      <button
+                        onClick={() => movePreset(idx, -1)}
+                        disabled={idx === 0}
+                        className="p-0.5 text-gray-600 hover:text-gray-400 disabled:opacity-20 transition-colors"
+                        aria-label="위로"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => movePreset(idx, 1)}
+                        disabled={idx === presets.length - 1}
+                        className="p-0.5 text-gray-600 hover:text-gray-400 disabled:opacity-20 transition-colors"
+                        aria-label="아래로"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                     <button
                       onClick={() => startEdit(p)}
                       className="p-1.5 text-gray-600 hover:text-violet-400 transition-colors"
