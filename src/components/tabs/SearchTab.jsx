@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search, X, Trash2, Pencil } from 'lucide-react';
 import { fmt } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
 
 // 업데이트 이력:
 // - 기간 필터에 월별 프리셋 버튼 추가 (이번 달, 지난 달, 2달 전, 3달 전)
@@ -33,6 +34,7 @@ const MONTH_PRESETS = [
 ];
 
 export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, onEditExpense }) {
+  const { theme } = useTheme();
   const [query,    setQuery]    = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo,   setDateTo]   = useState('');
@@ -138,14 +140,14 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
               type="date"
               value={dateFrom}
               onChange={e => handleDateFromChange(e.target.value)}
-              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
               className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
             <input
               type="date"
               value={dateTo}
               onChange={e => handleDateToChange(e.target.value)}
-              style={{ colorScheme: 'dark', boxSizing: 'border-box' }}
+              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
               className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
           </div>
