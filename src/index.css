@@ -32,9 +32,9 @@
   to   { opacity: 1; }
 }
 
-/* iOS Safari date 입력칸 높이 팽창 버그 — overflow:hidden으로 내부 shadow DOM 팽창 차단 */
 input[type="date"] {
-  overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 @layer utilities {
@@ -59,13 +59,6 @@ input[type="date"] {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   업데이트 이력:
-   - Japan 모드 테마 추가: [data-theme="japan"] 셀렉터로 Tailwind 클래스 오버라이드
-   - 벚꽃 핑크(#FCE2E1) · 화지 흰색(#FAF5F0) · 사쿠라 로즈(#C96480) 컬러 팔레트 적용
-   - 다크 모드용 gray/violet 계열 색상을 일본 전통 색상으로 전환
-   - date 입력의 color-scheme을 Japan 모드에서 light로 강제 전환
-   ══════════════════════════════════════════════════════════════ */
 
 /* ── Root & Page Background ──────────────────────────────────── */
 [data-theme="japan"]              { background-color: #FAF5F0; color: #1a1a2e; }
