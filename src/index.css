@@ -35,6 +35,8 @@
 input[type="date"] {
   -webkit-appearance: none;
   appearance: none;
+  /* text-sm 줄 높이로 고정 — 브라우저별 내부 편집 영역 높이 팽창 방지 */
+  line-height: 1.25rem;
 }
 
 @layer utilities {
