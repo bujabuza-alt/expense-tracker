@@ -57,8 +57,8 @@ export default function AddExpenseModal({
                 type="date"
                 value={form.date}
                 onChange={e => onFieldChange('date', e.target.value)}
-                style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
-                className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+                style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
+                className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
               />
             </div>
 
@@ -74,7 +74,6 @@ export default function AddExpenseModal({
                 placeholder="무엇을 구매했나요?"
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && isValid && onSubmit()}
-                style={{ boxSizing: 'border-box' }}
                 className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
               />
             </div>
@@ -92,7 +91,6 @@ export default function AddExpenseModal({
                 min="0"
                 inputMode="numeric"
                 onKeyDown={e => e.key === 'Enter' && isValid && onSubmit()}
-                style={{ boxSizing: 'border-box' }}
                 className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
               />
             </div>
@@ -111,7 +109,6 @@ export default function AddExpenseModal({
                   min="1"
                   max="60"
                   inputMode="numeric"
-                  style={{ boxSizing: 'border-box' }}
                   className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
                 />
                 {installments > 1 && (
@@ -135,7 +132,6 @@ export default function AddExpenseModal({
               <select
                 value={form.paymentMethod}
                 onChange={e => onFieldChange('paymentMethod', e.target.value)}
-                style={{ boxSizing: 'border-box' }}
                 className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors appearance-none cursor-pointer"
               >
                 {paymentMethods.map(pm => (

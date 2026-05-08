@@ -16,18 +16,6 @@ import PaymentTab  from './components/tabs/PaymentTab';
 import AnalysisTab from './components/tabs/AnalysisTab';
 import SettingsTab from './components/tabs/SettingsTab';
 
-// 업데이트 이력:
-// - HomeTab에서 presets/onAddPreset 프롭 제거 (빠른 추가 섹션 제거에 따른 정리)
-// - 지출 편집 기능 추가: editingExpense 상태, showEditModal 상태, editForm 상태 추가
-// - updateExpense 핸들러 구현 (id 기준으로 기존 항목 교체)
-// - openEditModal: 선택한 지출 데이터를 편집 폼에 사전 세팅
-// - HomeTab, SearchTab 에 onEditExpense 프롭 전달
-// - Japan 모드 테마 지원: ThemeContext 연동, data-theme 속성 적용, SettingsTab에 테마 제어 프롭 전달
-// - 할부 결제 기능: form에 installmentMonths 추가, addExpense에서 개월 수만큼 항목 자동 생성
-//   (금액 균등 분할, 첫 달에 나머지 원 합산, addMonths로 월말 날짜 자동 보정)
-// ================================================================
-// 메인 앱 컴포넌트 — 전역 상태 관리 및 렌더 조율
-// ================================================================
 export default function App() {
   const now = new Date();
   const { theme, setTheme } = useTheme();

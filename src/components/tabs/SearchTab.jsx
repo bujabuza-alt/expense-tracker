@@ -3,13 +3,6 @@ import { Search, X, Trash2, Pencil } from 'lucide-react';
 import { fmt } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 
-// 업데이트 이력:
-// - 기간 필터에 월별 프리셋 버튼 추가 (이번 달, 지난 달, 2달 전, 3달 전)
-// - 검색 결과 항목에 편집(연필) 버튼 추가
-// - onEditExpense 프롭 추가
-// - 레이아웃 수정: 프리셋 버튼을 grid-cols-4 로 교체하여 버튼·날짜입력 겹침 해결
-// - 날짜 입력 grid 셀에 min-w-0 래퍼 추가로 overflow 차단
-
 // YYYY-MM-DD 문자열 반환 헬퍼
 const toIso = (date) => {
   const y = date.getFullYear();
@@ -105,7 +98,6 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="검색어를 입력하세요"
-            style={{ boxSizing: 'border-box' }}
             className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
           />
         </div>
@@ -134,21 +126,20 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
             ))}
           </div>
 
-          {/* 날짜 범위 입력 — 세로 스택, 다른 입력칸과 동일한 높이 */}
           <div className="flex flex-col gap-2">
             <input
               type="date"
               value={dateFrom}
               onChange={e => handleDateFromChange(e.target.value)}
-              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
-              className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
+              className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
             <input
               type="date"
               value={dateTo}
               onChange={e => handleDateToChange(e.target.value)}
-              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark', boxSizing: 'border-box' }}
-              className="block w-full h-[42px] bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
+              style={{ colorScheme: theme === 'japan' ? 'light' : 'dark' }}
+              className="block w-full appearance-none bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors"
             />
           </div>
           {dateFrom && dateTo && (
@@ -166,7 +157,6 @@ export default function SearchTab({ expenses, paymentMethods, onDeleteExpense, o
           <select
             value={filterPM}
             onChange={e => setFilterPM(e.target.value)}
-            style={{ boxSizing: 'border-box' }}
             className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors appearance-none cursor-pointer"
           >
             <option value="전체">전체</option>
