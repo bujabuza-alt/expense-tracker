@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import { DEFAULT_PAYMENT_METHODS, DEFAULT_PRESETS } from './constants';
+import { DEFAULT_PAYMENT_METHODS, DEFAULT_PRESETS, DEFAULT_CATEGORIES } from './constants';
 import { TODAY, uid, ls, addMonths }                from './utils';
 import { useTheme }                                 from './context/ThemeContext';
 
@@ -29,6 +29,7 @@ export default function App() {
   const [budget,         setBudget]         = useState(() => ls.get('et_budget',          500000));
   const [paymentMethods, setPaymentMethods] = useState(() => ls.get('et_payment_methods', DEFAULT_PAYMENT_METHODS));
   const [presets,        setPresets]        = useState(() => ls.get('et_presets',         DEFAULT_PRESETS));
+  const [categories,     setCategories]     = useState(() => ls.get('et_categories',      DEFAULT_CATEGORIES));
 
   // ── 예산 편집 상태 ────────────────────────────────────────────
   const [editingBudget, setEditingBudget] = useState(false);
@@ -69,6 +70,7 @@ export default function App() {
   useEffect(() => ls.set('et_budget',          budget),         [budget]);
   useEffect(() => ls.set('et_payment_methods', paymentMethods), [paymentMethods]);
   useEffect(() => ls.set('et_presets',         presets),        [presets]);
+  useEffect(() => ls.set('et_categories',      categories),     [categories]);
 
   // ── 계산값 (메모이제이션) ─────────────────────────────────────
 
@@ -236,6 +238,12 @@ export default function App() {
   const deleteExpense = (id) =>
     setExpenses(prev => prev.filter(e => e.id !== id));
 
+  // 카테고리 이름 변경 시 연관된 모든 지출 항목 이름도 일괄 업데이트 (반응형 리네임)
+  const renameCategory = (oldName, newName) => {
+    setCategories(prev => prev.map(c => c.name === oldName ? { ...c, name: newName } : c));
+    setExpenses(prev => prev.map(e => e.name === oldName ? { ...e, name: newName } : e));
+  };
+
   const saveBudget = () => {
     const val = parseFloat(budgetDraft.replace(/[^0-9.]/g, ''));
     if (!isNaN(val) && val >= 0) setBudget(val);
@@ -328,6 +336,9 @@ export default function App() {
             presets={presets}
             onUpdatePaymentMethods={setPaymentMethods}
             onUpdatePresets={setPresets}
+            categories={categories}
+            onUpdateCategories={setCategories}
+            onRenameCategory={renameCategory}
             theme={theme}
             onThemeChange={setTheme}
           />
@@ -352,6 +363,7 @@ export default function App() {
         <AddExpenseModal
           form={form}
           paymentMethods={paymentMethods}
+          categories={categories}
           onClose={() => setShowAddModal(false)}
           onFieldChange={(field, value) => setForm(f => ({ ...f, [field]: value }))}
           onSubmit={addExpense}
@@ -364,6 +376,7 @@ export default function App() {
           editMode
           form={editForm}
           paymentMethods={paymentMethods}
+          categories={categories}
           onClose={() => { setShowEditModal(false); setEditingExpense(null); }}
           onFieldChange={(field, value) => setEditForm(f => ({ ...f, [field]: value }))}
           onSubmit={updateExpense}

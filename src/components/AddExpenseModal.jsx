@@ -3,7 +3,7 @@ import { fmt } from '../utils';
 import { useTheme } from '../context/ThemeContext';
 
 export default function AddExpenseModal({
-  form, paymentMethods, onClose, onFieldChange, onSubmit,
+  form, paymentMethods, categories = [], onClose, onFieldChange, onSubmit,
   editMode = false,
 }) {
   const { theme } = useTheme();
@@ -62,13 +62,14 @@ export default function AddExpenseModal({
               />
             </div>
 
-            {/* 카테고리 */}
+            {/* 카테고리 — datalist로 기존 카테고리 자동완성 제안 */}
             <div>
               <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
                 카테고리
               </label>
               <input
                 type="text"
+                list="category-datalist"
                 value={form.name}
                 onChange={e => onFieldChange('name', e.target.value)}
                 placeholder="무엇을 구매했나요?"
@@ -76,6 +77,12 @@ export default function AddExpenseModal({
                 onKeyDown={e => e.key === 'Enter' && isValid && onSubmit()}
                 className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
               />
+              {/* 저장된 카테고리 목록을 자동완성 후보로 제공 */}
+              <datalist id="category-datalist">
+                {categories.map(c => (
+                  <option key={c.id} value={c.name} />
+                ))}
+              </datalist>
             </div>
 
             {/* 금액 */}
