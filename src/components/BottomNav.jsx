@@ -11,7 +11,7 @@ const TABS = [
 export default function BottomNav({ activeTab, onTabChange }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 bg-gray-900 border-t border-gray-800"
+      className="fixed bottom-0 left-0 right-0 z-30 bg-gray-950/95 backdrop-blur-md border-t border-gray-700"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="max-w-md mx-auto flex">

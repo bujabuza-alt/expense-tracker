@@ -53,6 +53,7 @@ export default function App() {
     amount:            '',
     paymentMethod:     paymentMethods[0] ?? '',
     installmentMonths: '1',
+    memo:              '',
   });
 
   // ── 지출 편집 상태 ────────────────────────────────────────────
@@ -63,6 +64,7 @@ export default function App() {
     name:          '',
     amount:        '',
     paymentMethod: '',
+    memo:          '',
   });
 
   // ── 로컬스토리지 자동 동기화 ──────────────────────────────────
@@ -131,6 +133,7 @@ export default function App() {
       amount:            '',
       paymentMethod:     paymentMethods[0] ?? '',
       installmentMonths: '1',
+      memo:              '',
     });
     setShowAddModal(true);
     setFabOpen(false);
@@ -143,24 +146,31 @@ export default function App() {
     if (!form.name.trim() || isNaN(amount) || amount <= 0) return;
 
     if (installments <= 1) {
-      // 일반 단건 저장
       setExpenses(prev => [...prev, {
         id:            uid(),
         date:          form.date,
         name:          form.name.trim(),
         amount,
         paymentMethod: form.paymentMethod,
+        memo:          form.memo.trim(),
       }]);
     } else {
       // 할부: 총액을 개월수로 균등 분할, 나머지는 첫 달에 합산
+      // 이름에 "(X/Y개월)" 대신 메모에 할부 정보를 기록하고, installmentGroupId로 묶음
+      const groupId   = uid();
       const perMonth  = Math.floor(amount / installments);
       const remainder = amount - perMonth * installments;
+      const userMemo  = form.memo.trim();
       const entries   = Array.from({ length: installments }, (_, i) => ({
-        id:            uid(),
-        date:          addMonths(form.date, i),
-        name:          `${form.name.trim()} (${i + 1}/${installments}개월)`,
-        amount:        i === 0 ? perMonth + remainder : perMonth,
-        paymentMethod: form.paymentMethod,
+        id:                 uid(),
+        date:               addMonths(form.date, i),
+        name:               form.name.trim(),
+        amount:             i === 0 ? perMonth + remainder : perMonth,
+        paymentMethod:      form.paymentMethod,
+        memo:               userMemo
+          ? `${i + 1}/${installments}개월 할부 · ${userMemo}`
+          : `${i + 1}/${installments}개월 할부`,
+        installmentGroupId: groupId,
       }));
       setExpenses(prev => [...prev, ...entries]);
     }
@@ -176,48 +186,58 @@ export default function App() {
       name:          expense.name,
       amount:        String(expense.amount),
       paymentMethod: expense.paymentMethod,
+      memo:          expense.memo ?? '',
     });
     setShowEditModal(true);
   };
 
-  // 지출 수정 저장 — 할부 항목이면 이후 동일 그룹에도 이름·결제수단·금액 전파
+  // 지출 수정 저장 — 할부 항목이면 동일 그룹 전체에 이름·결제수단·금액 전파
   const updateExpense = () => {
     const amount = parseFloat(editForm.amount);
     if (!editForm.name.trim() || isNaN(amount) || amount <= 0) return;
 
-    const installmentMatch = editingExpense.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
+    const newName = editForm.name.trim();
 
-    if (installmentMatch) {
-      const [, origBase, currentIdxStr, totalStr] = installmentMatch;
-      const currentIdx = parseInt(currentIdxStr, 10);
-      const total      = parseInt(totalStr, 10);
-
-      // 편집 폼 이름에서 새 베이스명 추출 (패턴 포함 여부 무관)
-      const newNameMatch = editForm.name.trim().match(/^(.+) \(\d+\/\d+개월\)$/);
-      const newBase = newNameMatch ? newNameMatch[1] : editForm.name.trim();
-
+    // ① 신규 방식: installmentGroupId로 그룹 전파
+    if (editingExpense.installmentGroupId) {
+      const groupId = editingExpense.installmentGroupId;
       setExpenses(prev => prev.map(e => {
         if (e.id === editingExpense.id) {
-          return { ...e, date: editForm.date, name: editForm.name.trim(), amount, paymentMethod: editForm.paymentMethod };
+          return { ...e, date: editForm.date, name: newName, amount, paymentMethod: editForm.paymentMethod, memo: editForm.memo };
         }
-        const sub = e.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
-        if (
-          sub &&
-          sub[1] === origBase &&
-          parseInt(sub[3], 10) === total &&
-          parseInt(sub[2], 10) > currentIdx
-        ) {
-          const k = parseInt(sub[2], 10);
-          return { ...e, name: `${newBase} (${k}/${total}개월)`, paymentMethod: editForm.paymentMethod, amount };
+        if (e.installmentGroupId === groupId) {
+          return { ...e, name: newName, amount, paymentMethod: editForm.paymentMethod };
         }
         return e;
       }));
+
+    // ② 구형 방식: 이름 패턴 "(X/Y개월)" 으로 그룹 전파 (기존 데이터 호환)
     } else {
-      setExpenses(prev => prev.map(e =>
-        e.id === editingExpense.id
-          ? { ...e, date: editForm.date, name: editForm.name.trim(), amount, paymentMethod: editForm.paymentMethod }
-          : e
-      ));
+      const legacyMatch = editingExpense.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
+      if (legacyMatch) {
+        const [, origBase, , totalStr] = legacyMatch;
+        const total = parseInt(totalStr, 10);
+        const newNameMatch = newName.match(/^(.+) \(\d+\/\d+개월\)$/);
+        const newBase = newNameMatch ? newNameMatch[1] : newName;
+
+        setExpenses(prev => prev.map(e => {
+          if (e.id === editingExpense.id) {
+            return { ...e, date: editForm.date, name: newName, amount, paymentMethod: editForm.paymentMethod, memo: editForm.memo };
+          }
+          const sub = e.name.match(/^(.+) \((\d+)\/(\d+)개월\)$/);
+          if (sub && sub[1] === origBase && parseInt(sub[3], 10) === total) {
+            const k = parseInt(sub[2], 10);
+            return { ...e, name: `${newBase} (${k}/${total}개월)`, paymentMethod: editForm.paymentMethod, amount };
+          }
+          return e;
+        }));
+      } else {
+        setExpenses(prev => prev.map(e =>
+          e.id === editingExpense.id
+            ? { ...e, date: editForm.date, name: newName, amount, paymentMethod: editForm.paymentMethod, memo: editForm.memo }
+            : e
+        ));
+      }
     }
 
     setShowEditModal(false);
@@ -232,6 +252,7 @@ export default function App() {
       name:          preset.name,
       amount:        preset.amount,
       paymentMethod: preset.paymentMethod,
+      memo:          '',
     }]);
   };
 
@@ -374,6 +395,7 @@ export default function App() {
       {showEditModal && (
         <AddExpenseModal
           editMode
+          editingExpense={editingExpense}
           form={editForm}
           paymentMethods={paymentMethods}
           categories={categories}

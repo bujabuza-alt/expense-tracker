@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 
 export default function AddExpenseModal({
   form, paymentMethods, categories = [], onClose, onFieldChange, onSubmit,
-  editMode = false,
+  editMode = false, editingExpense = null,
 }) {
   const { theme } = useTheme();
   const installments  = Math.max(1, parseInt(form.installmentMonths, 10) || 1);
@@ -13,6 +13,11 @@ export default function AddExpenseModal({
   const perMonth      = installments > 1 && totalAmount > 0
     ? Math.floor(totalAmount / installments)
     : 0;
+
+  const isInstallmentGroup =
+    editMode && editingExpense &&
+    (editingExpense.installmentGroupId ||
+      /^.+ \(\d+\/\d+개월\)$/.test(editingExpense.name));
 
   // 현재 form.name 이 카테고리 목록에 없는 커스텀 값이면 직접 입력 모드로 시작
   const isKnownCategory = categories.some(c => c.name === form.name);
@@ -59,6 +64,13 @@ export default function AddExpenseModal({
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {/* 할부 그룹 안내 배너 */}
+          {isInstallmentGroup && (
+            <div className="mb-4 px-3 py-2.5 bg-violet-900/30 border border-violet-700/40 rounded-xl text-[11px] text-violet-300 leading-relaxed">
+              할부 항목입니다. 이름·금액·결제수단을 수정하면 같은 그룹의 모든 항목에 자동 반영됩니다.
+            </div>
+          )}
 
           {/* 입력 폼 — space-y-4로 필드 간 간격 확보 */}
           <div className="space-y-4">
@@ -191,6 +203,20 @@ export default function AddExpenseModal({
                   <option key={pm} value={pm}>{pm}</option>
                 ))}
               </select>
+            </div>
+
+            {/* 메모 */}
+            <div>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
+                메모 (선택)
+              </label>
+              <textarea
+                value={form.memo ?? ''}
+                onChange={e => onFieldChange('memo', e.target.value)}
+                placeholder="메모를 입력하세요"
+                rows={2}
+                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600 resize-none"
+              />
             </div>
           </div>
 
