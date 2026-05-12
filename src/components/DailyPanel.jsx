@@ -32,6 +32,9 @@ export default function DailyPanel({ selDate, selExpenses, onAddExpense, onDelet
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-gray-100 font-semibold truncate">{e.name}</p>
                   <p className="text-[10px] text-gray-500 mt-0.5">{e.paymentMethod}</p>
+                  {e.memo && (
+                    <p className="text-[10px] text-gray-600 mt-0.5 truncate">{e.memo}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 ml-3 shrink-0">
                   <span className="text-sm font-bold text-rose-400">₩{fmt(e.amount)}</span>
