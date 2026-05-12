@@ -62,6 +62,17 @@ input[type="date"] {
 }
 
 
+/* ── 모바일 자동 줌 방지 ─────────────────────────────────────────
+   iOS Safari는 font-size < 16px 인풋에 포커스하면 뷰포트를 자동 확대함.
+   뷰포트 메타(maximum-scale=1.0, user-scalable=no)로 1차 차단하고,
+   아래 CSS로 폼 요소의 실효 폰트 크기를 16px로 보정하여 2차 차단.
+   ── */
+input,
+textarea,
+select {
+  font-size: max(16px, 1em);
+}
+
 /* ── Root & Page Background ──────────────────────────────────── */
 [data-theme="japan"]              { background-color: #FAF5F0; color: #1a1a2e; }
 [data-theme="japan"] .bg-gray-950 { background-color: #FAF5F0; }

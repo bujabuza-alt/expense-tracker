@@ -8,6 +8,18 @@ export const DEFAULT_PAYMENT_METHODS = [
   '삼성페이', '카카오페이', '네이버페이',
 ];
 
+// 기본 카테고리 목록 (사용자가 편집·정렬·삭제 가능)
+export const DEFAULT_CATEGORIES = [
+  { id: 'cat1', name: '식비' },
+  { id: 'cat2', name: '교통비' },
+  { id: 'cat3', name: '카페/음료' },
+  { id: 'cat4', name: '쇼핑' },
+  { id: 'cat5', name: '생활용품' },
+  { id: 'cat6', name: '의료/건강' },
+  { id: 'cat7', name: '문화/여가' },
+  { id: 'cat8', name: '기타' },
+];
+
 // 빠른 추가 기본 프리셋 (사용자가 편집 가능)
 export const DEFAULT_PRESETS = [
   { id: 'p1', emoji: '🚬', name: '담배 1갑', amount: 4500, paymentMethod: '롯데카드' },

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Check, X, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { uid, fmt } from '../../utils';
+import CategorySection from './CategorySection';
 
 // ═══════════════════════════════════════════════════════════════
 // 결제 수단 CRUD 관리 섹션
@@ -513,15 +514,24 @@ function ThemeSection({ theme, onThemeChange }) {
 
 // ═══════════════════════════════════════════════════════════════
 // 설정 탭 루트 컴포넌트
+// 업데이트 이력:
+// - v1.1.0 (2026-05-12): 카테고리 관리 섹션(CategorySection) 추가
+//   · 드래그 앤 드롭 순서 변경, CRUD, 반응형 리네임 지원
 // ═══════════════════════════════════════════════════════════════
 export default function SettingsTab({
   paymentMethods, presets,
   onUpdatePaymentMethods, onUpdatePresets,
+  categories, onUpdateCategories, onRenameCategory,
   theme, onThemeChange,
 }) {
   return (
     <div className="space-y-4">
       <ThemeSection theme={theme} onThemeChange={onThemeChange} />
+      <CategorySection
+        categories={categories}
+        onUpdate={onUpdateCategories}
+        onRename={onRenameCategory}
+      />
       <PaymentMethodsSection
         paymentMethods={paymentMethods}
         onUpdate={onUpdatePaymentMethods}
