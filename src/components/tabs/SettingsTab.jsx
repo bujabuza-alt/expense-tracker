@@ -7,6 +7,7 @@ import CategorySection from './CategorySection';
 // 결제 수단 CRUD 관리 섹션
 // ═══════════════════════════════════════════════════════════════
 function PaymentMethodsSection({ paymentMethods, onUpdate }) {
+  const [isOpen,    setIsOpen]    = useState(true);
   const [adding,    setAdding]    = useState(false);
   const [newPM,     setNewPM]     = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -45,10 +46,18 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
   return (
     <section className="bg-gray-900 rounded-2xl p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-gray-200">결제 수단 관리</h3>
+        <button
+          onClick={() => setIsOpen(o => !o)}
+          className="flex items-center gap-2 flex-1 min-w-0"
+        >
+          <h3 className="text-sm font-bold text-gray-200">결제 수단 관리</h3>
+          {isOpen
+            ? <ChevronUp   className="w-3.5 h-3.5 text-gray-500" />
+            : <ChevronDown className="w-3.5 h-3.5 text-gray-500" />}
+        </button>
         <button
           onClick={() => setAdding(a => !a)}
-          className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-900/30 hover:bg-violet-900/50 px-2.5 py-1.5 rounded-lg transition-all"
+          className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-900/30 hover:bg-violet-900/50 px-2.5 py-1.5 rounded-lg transition-all shrink-0"
         >
           <Plus className="w-3 h-3" />
           추가
@@ -56,7 +65,7 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
       </div>
 
       {/* 새 결제 수단 입력 폼 */}
-      {adding && (
+      {isOpen && adding && (
         <div className="flex gap-2">
           <input
             autoFocus
@@ -86,7 +95,7 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
       )}
 
       {/* 결제 수단 목록 */}
-      <ul className="space-y-2">
+      {isOpen && <ul className="space-y-2">
         {paymentMethods.map((pm, idx) => (
           <li key={pm} className="flex items-center justify-between p-3 bg-gray-800 rounded-xl">
             {editingId === pm ? (
@@ -157,7 +166,7 @@ function PaymentMethodsSection({ paymentMethods, onUpdate }) {
             )}
           </li>
         ))}
-      </ul>
+      </ul>}
     </section>
   );
 }

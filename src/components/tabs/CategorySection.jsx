@@ -34,7 +34,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Plus, Trash2, Check, X, Pencil, GripVertical, Tag } from 'lucide-react';
+import { Plus, Trash2, Check, X, Pencil, GripVertical, Tag, ChevronDown, ChevronUp } from 'lucide-react';
 import { uid } from '../../utils';
 
 // ── 드래그 오버레이용 정적 아이템 (드래그 중 커서에 따라다니는 복사본) ──
@@ -151,6 +151,7 @@ function SortableCategoryItem({
 
 // ── 카테고리 관리 섹션 (메인) ────────────────────────────────────
 export default function CategorySection({ categories, onUpdate, onRename }) {
+  const [isOpen,     setIsOpen]     = useState(true);
   const [adding,     setAdding]     = useState(false);
   const [newName,    setNewName]    = useState('');
   const [editingId,  setEditingId]  = useState(null);
@@ -227,13 +228,19 @@ export default function CategorySection({ categories, onUpdate, onRename }) {
     <section className="bg-gray-900 rounded-2xl p-4 space-y-3">
       {/* 섹션 헤더 */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Tag className="w-4 h-4 text-violet-400" />
+        <button
+          onClick={() => setIsOpen(o => !o)}
+          className="flex items-center gap-2 flex-1 min-w-0"
+        >
+          <Tag className="w-4 h-4 text-violet-400 shrink-0" />
           <h3 className="text-sm font-bold text-gray-200">카테고리 관리</h3>
-        </div>
+          {isOpen
+            ? <ChevronUp   className="w-3.5 h-3.5 text-gray-500 ml-1" />
+            : <ChevronDown className="w-3.5 h-3.5 text-gray-500 ml-1" />}
+        </button>
         <button
           onClick={() => { setAdding(a => !a); setNewName(''); }}
-          className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-900/30 hover:bg-violet-900/50 px-2.5 py-1.5 rounded-lg transition-all"
+          className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-900/30 hover:bg-violet-900/50 px-2.5 py-1.5 rounded-lg transition-all shrink-0"
         >
           <Plus className="w-3 h-3" />
           추가
@@ -241,7 +248,7 @@ export default function CategorySection({ categories, onUpdate, onRename }) {
       </div>
 
       {/* 새 카테고리 입력 폼 */}
-      {adding && (
+      {isOpen && adding && (
         <div className="flex gap-2">
           <input
             autoFocus
@@ -273,46 +280,50 @@ export default function CategorySection({ categories, onUpdate, onRename }) {
       )}
 
       {/* 카테고리 목록 (드래그 앤 드롭) */}
-      {categories.length === 0 ? (
-        <div className="text-center py-6 text-gray-600 text-xs">
-          카테고리를 추가해보세요
-        </div>
-      ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}
-        >
-          <SortableContext items={categoryIds} strategy={verticalListSortingStrategy}>
-            <ul className="space-y-2">
-              {categories.map(cat => (
-                <SortableCategoryItem
-                  key={cat.id}
-                  category={cat}
-                  isEditing={editingId === cat.id}
-                  editDraft={editDraft}
-                  onEditChange={setEditDraft}
-                  onEditSave={saveEdit}
-                  onEditCancel={() => setEditingId(null)}
-                  onStartEdit={startEdit}
-                  onDelete={deleteCategory}
-                />
-              ))}
-            </ul>
-          </SortableContext>
+      {isOpen && (
+        categories.length === 0 ? (
+          <div className="text-center py-6 text-gray-600 text-xs">
+            카테고리를 추가해보세요
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <SortableContext items={categoryIds} strategy={verticalListSortingStrategy}>
+              <ul className="space-y-2">
+                {categories.map(cat => (
+                  <SortableCategoryItem
+                    key={cat.id}
+                    category={cat}
+                    isEditing={editingId === cat.id}
+                    editDraft={editDraft}
+                    onEditChange={setEditDraft}
+                    onEditSave={saveEdit}
+                    onEditCancel={() => setEditingId(null)}
+                    onStartEdit={startEdit}
+                    onDelete={deleteCategory}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
 
-          {/* 드래그 중 커서에 표시되는 고스트 아이템 */}
-          <DragOverlay>
-            {draggedCategory && <CategoryItemGhost name={draggedCategory.name} />}
-          </DragOverlay>
-        </DndContext>
+            {/* 드래그 중 커서에 표시되는 고스트 아이템 */}
+            <DragOverlay>
+              {draggedCategory && <CategoryItemGhost name={draggedCategory.name} />}
+            </DragOverlay>
+          </DndContext>
+        )
       )}
 
-      <p className="text-[10px] text-gray-600 text-center pt-0.5">
-        길게 누르거나 드래그하여 순서를 변경할 수 있습니다
-      </p>
+      {isOpen && (
+        <p className="text-[10px] text-gray-600 text-center pt-0.5">
+          길게 누르거나 드래그하여 순서를 변경할 수 있습니다
+        </p>
+      )}
     </section>
   );
 }
