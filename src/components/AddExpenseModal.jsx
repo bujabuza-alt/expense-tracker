@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { X } from 'lucide-react';
 import { fmt } from '../utils';
 import { useTheme } from '../context/ThemeContext';
@@ -13,10 +14,24 @@ export default function AddExpenseModal({
     ? Math.floor(totalAmount / installments)
     : 0;
 
+  // 현재 form.name 이 카테고리 목록에 없는 커스텀 값이면 직접 입력 모드로 시작
+  const isKnownCategory = categories.some(c => c.name === form.name);
+  const [showCustom, setShowCustom] = useState(!isKnownCategory && form.name !== '');
+
   const isValid =
     Boolean(form.name.trim()) &&
     Boolean(form.amount) &&
     parseFloat(form.amount) > 0;
+
+  const selectCategory = (name) => {
+    onFieldChange('name', name);
+    setShowCustom(false);
+  };
+
+  const openCustomInput = () => {
+    onFieldChange('name', '');
+    setShowCustom(true);
+  };
 
   return (
     <div
@@ -62,27 +77,58 @@ export default function AddExpenseModal({
               />
             </div>
 
-            {/* 카테고리 — datalist로 기존 카테고리 자동완성 제안 */}
+            {/* 카테고리 — 칩(pill) 그리드 선택 + 직접 입력 */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
                 카테고리
               </label>
-              <input
-                type="text"
-                list="category-datalist"
-                value={form.name}
-                onChange={e => onFieldChange('name', e.target.value)}
-                placeholder="무엇을 구매했나요?"
-                autoFocus
-                onKeyDown={e => e.key === 'Enter' && isValid && onSubmit()}
-                className="block w-full bg-gray-800 border border-gray-700 focus:border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
-              />
-              {/* 저장된 카테고리 목록을 자동완성 후보로 제공 */}
-              <datalist id="category-datalist">
-                {categories.map(c => (
-                  <option key={c.id} value={c.name} />
-                ))}
-              </datalist>
+
+              {/* 카테고리 선택 칩 목록 */}
+              <div className="flex flex-wrap gap-2 mb-2">
+                {categories.map(c => {
+                  const selected = !showCustom && form.name === c.name;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => selectCategory(c.name)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                        selected
+                          ? 'bg-violet-600 border-transparent text-white'
+                          : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-violet-500 hover:text-violet-300'
+                      }`}
+                    >
+                      {c.name}
+                    </button>
+                  );
+                })}
+
+                {/* 직접 입력 토글 버튼 */}
+                <button
+                  type="button"
+                  onClick={openCustomInput}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                    showCustom
+                      ? 'bg-violet-600 border-transparent text-white'
+                      : 'bg-gray-800 border-dashed border-gray-600 text-gray-500 hover:border-violet-500 hover:text-violet-300'
+                  }`}
+                >
+                  직접 입력
+                </button>
+              </div>
+
+              {/* 직접 입력 텍스트 필드 — 직접 입력 모드일 때만 표시 */}
+              {showCustom && (
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={e => onFieldChange('name', e.target.value)}
+                  placeholder="카테고리를 직접 입력하세요"
+                  autoFocus
+                  onKeyDown={e => e.key === 'Enter' && isValid && onSubmit()}
+                  className="block w-full bg-gray-800 border border-violet-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder-gray-600"
+                />
+              )}
             </div>
 
             {/* 금액 */}
