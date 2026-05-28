@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Plus, Trash2, Check, X, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Plus, Trash2, Check, X, Pencil, ChevronUp, ChevronDown, Download, Upload } from 'lucide-react';
 import { uid, fmt } from '../../utils';
+import { DEFAULT_PAYMENT_METHODS, DEFAULT_PRESETS, DEFAULT_CATEGORIES } from '../../constants';
 import CategorySection from './CategorySection';
 
 // ═══════════════════════════════════════════════════════════════
@@ -466,6 +467,143 @@ function PresetsSection({ presets, paymentMethods, onUpdate }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// 데이터 백업 / 복원 섹션
+// ═══════════════════════════════════════════════════════════════
+function BackupSection({ expenses, budget, paymentMethods, presets, categories, theme, onRestore }) {
+  const [pending, setPending] = useState(null);
+  const [status,  setStatus]  = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleExport = () => {
+    const payload = {
+      version:    1,
+      exportedAt: new Date().toISOString(),
+      expenses,
+      budget,
+      paymentMethods,
+      presets,
+      categories,
+      theme,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `expense-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if (!Array.isArray(d.expenses)) throw new Error('invalid');
+        setPending({
+          data: {
+            expenses:       d.expenses,
+            budget:         typeof d.budget === 'number' ? d.budget : 500000,
+            paymentMethods: Array.isArray(d.paymentMethods) ? d.paymentMethods : DEFAULT_PAYMENT_METHODS,
+            presets:        Array.isArray(d.presets)        ? d.presets        : DEFAULT_PRESETS,
+            categories:     Array.isArray(d.categories)     ? d.categories     : DEFAULT_CATEGORIES,
+            theme:          typeof d.theme === 'string'     ? d.theme          : 'dark',
+          },
+          count:      d.expenses.length,
+          exportedAt: d.exportedAt ?? null,
+        });
+        setStatus(null);
+      } catch {
+        setStatus('error');
+        setPending(null);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  const confirmRestore = () => {
+    onRestore(pending.data);
+    setPending(null);
+    setStatus('success');
+  };
+
+  return (
+    <section className="bg-gray-900 rounded-2xl p-4 space-y-3">
+      <h3 className="text-sm font-bold text-gray-200">데이터 백업 / 복원</h3>
+      <p className="text-[11px] text-gray-500">
+        지출 기록·카테고리·결제 수단·프리셋·예산 설정을 JSON 파일로 내보내거나 가져올 수 있습니다.
+      </p>
+
+      <div className="flex flex-col gap-2">
+        <button
+          onClick={handleExport}
+          className="flex items-center justify-center gap-2 w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-bold rounded-xl transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          백업 파일 내보내기
+        </button>
+
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white text-sm font-bold rounded-xl transition-colors"
+        >
+          <Upload className="w-4 h-4" />
+          백업 파일 가져오기
+        </button>
+        <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} className="hidden" />
+      </div>
+
+      {pending && (
+        <div className="p-3 bg-amber-900/30 border border-amber-700 rounded-xl space-y-2">
+          <p className="text-xs text-amber-300 font-semibold">복원 확인</p>
+          <p className="text-[11px] text-amber-400">
+            지출 기록 <span className="font-bold">{pending.count}건</span>이 포함된 백업 파일입니다.
+            {pending.exportedAt && (
+              <span className="block mt-0.5 text-amber-500">
+                백업 일시: {new Date(pending.exportedAt).toLocaleString('ko-KR')}
+              </span>
+            )}
+            <span className="block mt-1 font-bold text-amber-300">현재 모든 데이터가 백업 내용으로 덮어쓰여집니다.</span>
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={confirmRestore}
+              className="flex-1 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg transition-colors"
+            >
+              복원하기
+            </button>
+            <button
+              onClick={() => setPending(null)}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-400 text-xs font-bold rounded-lg transition-colors"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+      {status === 'success' && (
+        <div className="flex items-center gap-2 p-3 bg-green-900/30 border border-green-800 rounded-xl">
+          <Check className="w-4 h-4 text-green-400 shrink-0" />
+          <p className="text-xs text-green-400">데이터가 성공적으로 복원되었습니다.</p>
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="flex items-center gap-2 p-3 bg-red-900/30 border border-red-800 rounded-xl">
+          <X className="w-4 h-4 text-red-400 shrink-0" />
+          <p className="text-xs text-red-400">올바른 백업 파일이 아닙니다. 내보내기로 생성된 파일을 사용해 주세요.</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // 테마 선택 섹션
 // 업데이트 이력:
 // - Japan 모드 토글 추가: 다크 모드 / 재팬 모드 선택 UI 구현
@@ -528,13 +666,24 @@ function ThemeSection({ theme, onThemeChange }) {
 //   · 드래그 앤 드롭 순서 변경, CRUD, 반응형 리네임 지원
 // ═══════════════════════════════════════════════════════════════
 export default function SettingsTab({
+  expenses, budget,
   paymentMethods, presets,
   onUpdatePaymentMethods, onUpdatePresets,
   categories, onUpdateCategories, onRenameCategory,
   theme, onThemeChange,
+  onRestore,
 }) {
   return (
     <div className="space-y-4">
+      <BackupSection
+        expenses={expenses}
+        budget={budget}
+        paymentMethods={paymentMethods}
+        presets={presets}
+        categories={categories}
+        theme={theme}
+        onRestore={onRestore}
+      />
       <ThemeSection theme={theme} onThemeChange={onThemeChange} />
       <CategorySection
         categories={categories}

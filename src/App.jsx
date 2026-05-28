@@ -265,6 +265,15 @@ export default function App() {
     setExpenses(prev => prev.map(e => e.name === oldName ? { ...e, name: newName } : e));
   };
 
+  const handleRestore = ({ expenses, budget, paymentMethods, presets, categories, theme }) => {
+    setExpenses(expenses);
+    setBudget(budget);
+    setPaymentMethods(paymentMethods);
+    setPresets(presets);
+    setCategories(categories);
+    setTheme(theme);
+  };
+
   const saveBudget = () => {
     const val = parseFloat(budgetDraft.replace(/[^0-9.]/g, ''));
     if (!isNaN(val) && val >= 0) setBudget(val);
@@ -353,6 +362,8 @@ export default function App() {
 
         {activeTab === 'settings' && (
           <SettingsTab
+            expenses={expenses}
+            budget={budget}
             paymentMethods={paymentMethods}
             presets={presets}
             onUpdatePaymentMethods={setPaymentMethods}
@@ -362,6 +373,7 @@ export default function App() {
             onRenameCategory={renameCategory}
             theme={theme}
             onThemeChange={setTheme}
+            onRestore={handleRestore}
           />
         )}
       </div>
